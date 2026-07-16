@@ -1,0 +1,25 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+appsettings.Development.json
+*.db
+src/Church.Api/wwwroot/
+
+## Node
+client/node_modules/
+client/dist/
+
+## IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Build
+publish/

@@ -121,7 +121,7 @@ export default function Home() {
           {events.length > 0 ? (
             events.map(ev => (
               <div key={ev.id} className="schedule-item">
-                <div className="schedule-item__day">{['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][ev.dayOfWeek]}</div>
+                <div className="schedule-item__day">{['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][ev.dayOfWeek]}</div>
                 <p><strong>{ev.time}</strong> — {ev.title}</p>
               </div>
             ))

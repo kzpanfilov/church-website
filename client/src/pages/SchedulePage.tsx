@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { getScheduleEvents } from '../api/client';
 import type { ChurchEvent } from '../api/types';
 
-const DAY_NAMES = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+const DAY_NAMES = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 
 const SAINTS = [
   { date: '12 декабря', name: 'День памяти святого благоверного князя Александра Невского', type: 'Престольный праздник' },

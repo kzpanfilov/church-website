@@ -232,7 +232,7 @@ public static class SeedData
             {
                 Title = "Вечерня",
                 Description = "Вечернее богослужение",
-                DayOfWeek = 4,
+                DayOfWeek = 5,
                 Time = "17:00",
                 Location = "Храм Александра Невского",
                 IsRecurring = true,
@@ -243,7 +243,7 @@ public static class SeedData
             {
                 Title = "Божественная литургия",
                 Description = "Утреннее богослужение",
-                DayOfWeek = 6,
+                DayOfWeek = 0,
                 Time = "9:00",
                 Location = "Храм Александра Невского",
                 IsRecurring = true,
@@ -254,7 +254,7 @@ public static class SeedData
             {
                 Title = "Акафист Александру Невскому",
                 Description = "Вечернее молебновое пение",
-                DayOfWeek = 6,
+                DayOfWeek = 0,
                 Time = "17:00",
                 Location = "Храм Александра Невского",
                 IsRecurring = true,

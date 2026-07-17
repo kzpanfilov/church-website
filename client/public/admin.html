@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Админ-панель — Храм Александра Невского</title>
 <style>
 :root{--primary:#4a148c;--primary-light:#7c43bd;--primary-dark:#12005e;--gold:#c8a415;--bg:#f5f3f0;--card:#fff;--text:#2c2c2c;--text-light:#666;--border:#e0d8cc;--danger:#c62828}
@@ -244,7 +247,7 @@ function deletePage(id) {
 }
 
 // === SCHEDULE ===
-var DAY_NAMES = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+var DAY_NAMES = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
 
 function renderSchedule() {
   api('GET', '/events/all').then(function(events) {
@@ -254,13 +257,13 @@ function renderSchedule() {
       '<div class="form-row">' +
       '<div class="form-group"><label>Название</label><input type="text" id="sf-title" placeholder="Вечерня, Литургия, Акафист..." required></div>' +
       '<div class="form-group"><label>День недели</label><select id="sf-day">' +
-      '<option value="0">Понедельник</option>' +
-      '<option value="1">Вторник</option>' +
-      '<option value="2">Среда</option>' +
-      '<option value="3">Четверг</option>' +
-      '<option value="4" selected>Пятница</option>' +
-      '<option value="5">Суббота</option>' +
-      '<option value="6">Воскресенье</option>' +
+      '<option value="1">Понедельник</option>' +
+      '<option value="2">Вторник</option>' +
+      '<option value="3">Среда</option>' +
+      '<option value="4">Четверг</option>' +
+      '<option value="5" selected>Пятница</option>' +
+      '<option value="6">Суббота</option>' +
+      '<option value="0">Воскресенье</option>' +
       '</select></div>' +
       '</div>' +
       '<div class="form-row">' +
@@ -331,7 +334,7 @@ function resetSchedForm() {
   document.getElementById('sched-form').reset();
   document.getElementById('sf-id').value = '';
   document.getElementById('sf-cancel').style.display = 'none';
-  document.getElementById('sf-day').value = '4';
+  document.getElementById('sf-day').value = '5';
   document.getElementById('sf-recurring').checked = true;
   document.getElementById('sf-published').checked = true;
 }

@@ -18,7 +18,7 @@ WORKDIR /client
 COPY client/package.json client/package-lock.json ./
 RUN npm ci
 COPY client/ ./
-RUN npm run build
+RUN npm run build && sed -i 's/crossorigin//g' dist/index.html
 
 # Final image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0

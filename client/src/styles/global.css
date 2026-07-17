@@ -78,7 +78,7 @@ a:hover { color: var(--gold); }
 }
 
 .hero {
-  background: linear-gradient(rgba(74,20,140,0.7), rgba(74,20,140,0.85)), url('/images/church-hero.jpg') center/cover;
+  background: linear-gradient(135deg, rgba(74,20,140,0.85), rgba(120,40,180,0.9));
   color: white;
   text-align: center;
   padding: 80px 20px;

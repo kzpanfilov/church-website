@@ -150,7 +150,7 @@ public static class SeedData
 <p><a href='https://xn--d1acwg1ap.xn--p1ai/detjam-i-roditeljam/pravila-priema' target='_blank'>Правила приема в НФ «ДЕОЦ»</a></p>",
                 IsFeatured = true,
                 PublishedAt = DateTime.UtcNow,
-                ImageUrl = "/images/gkp-announcement.jpg"
+                ImageUrl = null
             },
             new Core.Models.News
             {

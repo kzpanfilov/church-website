@@ -12,8 +12,8 @@ public class EventsController : ControllerBase
     public EventsController(ContentService svc) => _svc = svc;
 
     [HttpGet]
-    public async Task<IActionResult> GetUpcoming([FromQuery] int count = 10) =>
-        Ok(await _svc.GetUpcomingEventsAsync(count));
+    public async Task<IActionResult> GetSchedule([FromQuery] int count = 50) =>
+        Ok(await _svc.GetScheduleEventsAsync(count));
 
     [HttpGet("all")]
     public async Task<IActionResult> GetAll() =>

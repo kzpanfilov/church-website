@@ -227,6 +227,42 @@ public static class SeedData
             new Core.Models.Video { Title = "Богослужение в храме", VideoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ", Category = "Богослужение", SortOrder = 2 }
         );
 
+        context.Events.AddRange(
+            new Core.Models.Event
+            {
+                Title = "Вечерня",
+                Description = "Вечернее богослужение",
+                DayOfWeek = 4,
+                Time = "17:00",
+                Location = "Храм Александра Невского",
+                IsRecurring = true,
+                IsPublished = true,
+                SortOrder = 1
+            },
+            new Core.Models.Event
+            {
+                Title = "Божественная литургия",
+                Description = "Утреннее богослужение",
+                DayOfWeek = 6,
+                Time = "9:00",
+                Location = "Храм Александра Невского",
+                IsRecurring = true,
+                IsPublished = true,
+                SortOrder = 2
+            },
+            new Core.Models.Event
+            {
+                Title = "Акафист Александру Невскому",
+                Description = "Вечернее молебновое пение",
+                DayOfWeek = 6,
+                Time = "17:00",
+                Location = "Храм Александра Невского",
+                IsRecurring = true,
+                IsPublished = true,
+                SortOrder = 3
+            }
+        );
+
         context.SiteSettings.AddRange(
             new Core.Models.SiteSettings { Key = "site_name", Value = "Храм Александра Невского", Description = "Название сайта", Group = "general" },
             new Core.Models.SiteSettings { Key = "church_name", Value = "Храм в честь благоверного князя Александра Невского", Description = "Полное название храма", Group = "general" },

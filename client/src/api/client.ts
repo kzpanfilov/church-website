@@ -22,7 +22,7 @@ export const getNews = (count = 20) => api.get<NewsItem[]>(`/news?count=${count}
 export const getNewsById = (id: number) => api.get<NewsItem>(`/news/${id}`).then(r => r.data);
 export const getPhotos = (category?: string) => api.get<Photo[]>('/gallery/photos', { params: { category } }).then(r => r.data);
 export const getVideos = (category?: string) => api.get<Video[]>('/gallery/videos', { params: { category } }).then(r => r.data);
-export const getUpcomingEvents = (count = 10) => api.get<ChurchEvent[]>(`/events?count=${count}`).then(r => r.data);
+export const getScheduleEvents = (count = 50) => api.get<ChurchEvent[]>(`/events?count=${count}`).then(r => r.data);
 export const getAllEvents = () => api.get<ChurchEvent[]>('/events/all').then(r => r.data);
 export const getAnnouncements = () => api.get<Announcement[]>('/announcements').then(r => r.data);
 export const getSettings = (group?: string) => api.get<SiteSetting[]>('/settings', { params: { group } }).then(r => r.data);

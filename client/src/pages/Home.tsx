@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { getNews, getAnnouncements } from '../api/client';
-import type { NewsItem, Announcement } from '../api/types';
+import { getNews, getAnnouncements, getScheduleEvents } from '../api/client';
+import type { NewsItem, Announcement, ChurchEvent } from '../api/types';
 
 const heroSlides = [
   { img: '/images/church-hero.jpg', title: 'Храм Александра Невского', desc: 'Духовный центр посёлка Зубчаниновка с 2001 года. Приглашаем на богослужения.' },
@@ -13,12 +13,14 @@ const heroSlides = [
 export default function Home() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [events, setEvents] = useState<ChurchEvent[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
   const timerRef = useRef<number>(0);
 
   useEffect(() => {
     getNews(10).then(setNews).catch(() => {});
     getAnnouncements().then(setAnnouncements).catch(() => {});
+    getScheduleEvents(50).then(setEvents).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -116,18 +118,29 @@ export default function Home() {
           <div className="accent-line" />
         </div>
         <div className="schedule-grid" style={{ marginBottom: 24 }}>
-          <div className="schedule-item">
-            <div className="schedule-item__day">Пятница</div>
-            <p><strong>17:00</strong> — вечерня</p>
-          </div>
-          <div className="schedule-item">
-            <div className="schedule-item__day">Воскресенье</div>
-            <p><strong>9:00</strong> — Божественная литургия</p>
-          </div>
-          <div className="schedule-item">
-            <div className="schedule-item__day">Воскресенье</div>
-            <p><strong>17:00</strong> — Акафист Александру Невскому</p>
-          </div>
+          {events.length > 0 ? (
+            events.map(ev => (
+              <div key={ev.id} className="schedule-item">
+                <div className="schedule-item__day">{['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][ev.dayOfWeek]}</div>
+                <p><strong>{ev.time}</strong> — {ev.title}</p>
+              </div>
+            ))
+          ) : (
+            <>
+              <div className="schedule-item">
+                <div className="schedule-item__day">Пятница</div>
+                <p><strong>17:00</strong> — вечерня</p>
+              </div>
+              <div className="schedule-item">
+                <div className="schedule-item__day">Воскресенье</div>
+                <p><strong>9:00</strong> — Божественная литургия</p>
+              </div>
+              <div className="schedule-item">
+                <div className="schedule-item__day">Воскресенье</div>
+                <p><strong>17:00</strong> — Акафист Александру Невскому</p>
+              </div>
+            </>
+          )}
         </div>
         <p style={{ textAlign: 'center', marginBottom: 24 }}>
           <Link to="/schedule" style={{ fontSize: '0.85rem', color: 'var(--gold)' }}>Полное расписание &rarr;</Link>

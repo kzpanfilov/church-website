@@ -43,11 +43,14 @@ export interface ChurchEvent {
   id: number;
   title: string;
   description?: string;
-  eventDate: string;
+  dayOfWeek: number;
   time?: string;
   location?: string;
   imageUrl?: string;
   isRecurring: boolean;
+  recurrenceRule?: string;
+  isPublished: boolean;
+  sortOrder: number;
 }
 
 export interface Announcement {

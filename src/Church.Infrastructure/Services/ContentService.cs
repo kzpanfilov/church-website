@@ -183,12 +183,13 @@ public class ContentService
     }
 
     // Events
-    public async Task<List<Event>> GetUpcomingEventsAsync(int count = 10) =>
-        await _db.Events.Where(e => e.IsPublished && e.EventDate >= DateTime.UtcNow)
-            .OrderBy(e => e.EventDate).Take(count).ToListAsync();
+    public async Task<List<Event>> GetScheduleEventsAsync(int count = 50) =>
+        await _db.Events.Where(e => e.IsPublished)
+            .OrderBy(e => e.DayOfWeek).ThenBy(e => e.SortOrder).ThenBy(e => e.Time)
+            .Take(count).ToListAsync();
 
     public async Task<List<Event>> GetAllEventsAsync() =>
-        await _db.Events.OrderByDescending(e => e.EventDate).ToListAsync();
+        await _db.Events.OrderBy(e => e.DayOfWeek).ThenBy(e => e.SortOrder).ThenBy(e => e.Time).ToListAsync();
 
     public async Task<Event?> GetEventByIdAsync(int id) => await _db.Events.FindAsync(id);
 
@@ -206,13 +207,14 @@ public class ContentService
         if (evt == null) return null;
         evt.Title = update.Title;
         evt.Description = update.Description;
-        evt.EventDate = update.EventDate;
+        evt.DayOfWeek = update.DayOfWeek;
         evt.Time = update.Time;
         evt.Location = update.Location;
         evt.ImageUrl = update.ImageUrl;
         evt.IsRecurring = update.IsRecurring;
         evt.RecurrenceRule = update.RecurrenceRule;
         evt.IsPublished = update.IsPublished;
+        evt.SortOrder = update.SortOrder;
         await _db.SaveChangesAsync();
         return evt;
     }

@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
-import { getAllEvents } from '../api/client';
+import { getScheduleEvents } from '../api/client';
 import type { ChurchEvent } from '../api/types';
+
+const DAY_NAMES = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
 
 const SAINTS = [
   { date: '12 декабря', name: 'День памяти святого благоверного князя Александра Невского', type: 'Престольный праздник' },
@@ -13,8 +15,13 @@ export default function SchedulePage() {
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getAllEvents().then(setEvents).catch(() => {});
+    getScheduleEvents(50).then(setEvents).catch(() => {});
   }, []);
+
+  const grouped = DAY_NAMES.map((day, idx) => ({
+    day,
+    events: events.filter(e => e.dayOfWeek === idx),
+  })).filter(g => g.events.length > 0);
 
   const handlePrint = () => window.print();
 
@@ -27,16 +34,17 @@ export default function SchedulePage() {
       </div>
 
       <div ref={printRef}>
-        {events.length > 0 ? (
+        {grouped.length > 0 ? (
           <div className="schedule-grid" style={{ marginBottom: 1 }}>
-            {events.map((ev) => (
-              <div key={ev.id} className="schedule-item">
-                <div className="schedule-item__day">{ev.time || 'По договорённости'}</div>
-                <p>
-                  <strong>{ev.title}</strong>
-                </p>
-                {ev.description && <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: 4 }}>{ev.description}</p>}
-                {ev.location && <p style={{ fontSize: '0.8rem', color: 'var(--text-light)', marginTop: 4 }}>{ev.location}</p>}
+            {grouped.map((g) => (
+              <div key={g.day} className="schedule-item">
+                <div className="schedule-item__day">{g.day}</div>
+                {g.events.map(ev => (
+                  <p key={ev.id}>
+                    <strong>{ev.time || 'По договорённости'}</strong> — {ev.title}
+                    {ev.description && <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}> ({ev.description})</span>}
+                  </p>
+                ))}
               </div>
             ))}
           </div>

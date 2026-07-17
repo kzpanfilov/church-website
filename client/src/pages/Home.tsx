@@ -1,95 +1,244 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getNews, getAnnouncements } from '../api/client';
 import type { NewsItem, Announcement } from '../api/types';
 
+const heroSlides = [
+  { img: '/images/church-hero.jpg', title: 'Храм Александра Невского', desc: 'Духовный центр посёлка Зубчаниновка с 2001 года. Приглашаем на богослужения.' },
+  { img: '/images/church-2.jpg', title: 'Расписание богослужений', desc: 'Пт 17:00 — вечерня  ·  Вс 9:00 — литургия  ·  Вс 17:00 — акафист' },
+  { img: '/images/church-interior.jpg', title: 'Детский центр «Невский»', desc: 'Набор детей от 3 до 7 лет. Художественное и духовно-просветительское направления.' },
+  { img: '/images/church-4.jpg', title: 'Приходите в наш храм', desc: 'ул. Транзитная, 111А, п. Зубчаниновка, г. Самара. Тел.: +7 (846) 931-20-71' },
+];
+
 export default function Home() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const timerRef = useRef<number>(0);
 
   useEffect(() => {
-    getNews(6).then(setNews).catch(() => {});
+    getNews(10).then(setNews).catch(() => {});
     getAnnouncements().then(setAnnouncements).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    timerRef.current = window.setInterval(() => {
+      setActiveSlide(p => (p + 1) % heroSlides.length);
+    }, 5500);
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  const goTo = (i: number) => {
+    setActiveSlide(i);
+    clearInterval(timerRef.current);
+    timerRef.current = window.setInterval(() => {
+      setActiveSlide(p => (p + 1) % heroSlides.length);
+    }, 5500);
+  };
+
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const weeklyNews = news.filter(n => new Date(n.publishedAt) >= weekAgo);
+
   return (
     <div>
-      <div className="hero">
-        <h2>&#10013; Храм в честь благоверного князя Александра Невского</h2>
-        <p>Духовный центр посёлка Зубчаниновка с 2001 года</p>
-        <p style={{ marginTop: 8, fontSize: '0.95rem', opacity: 0.8 }}>
-          ул. Транзитная, 111А, г. Самара
-        </p>
+      {/* HERO */}
+      <div className="hero-slider">
+        {heroSlides.map((s, i) => (
+          <div key={i} className={`hero-slide ${i === activeSlide ? 'active' : ''}`}>
+            <img src={s.img} alt={s.title} />
+            <div className="overlay" />
+          </div>
+        ))}
+        <div className="hero-content">
+          <h2>{heroSlides[activeSlide].title}</h2>
+          <p>{heroSlides[activeSlide].desc}</p>
+          <Link to="/about" className="btn-hero">Подробнее</Link>
+        </div>
+        <div className="hero-arrows">
+          <button className="hero-arrow" onClick={() => goTo((activeSlide - 1 + heroSlides.length) % heroSlides.length)}>&#8592;</button>
+          <button className="hero-arrow" onClick={() => goTo((activeSlide + 1) % heroSlides.length)}>&#8594;</button>
+        </div>
+        <div className="hero-dots">
+          {heroSlides.map((_, i) => (
+            <button key={i} className={`hero-dot ${i === activeSlide ? 'active' : ''}`} onClick={() => goTo(i)} />
+          ))}
+        </div>
       </div>
 
+      {/* TICKER */}
+      {weeklyNews.length > 0 && (
+        <div className="news-ticker">
+          <div className="news-ticker-inner">
+            {weeklyNews.map((n) => (
+              <span key={n.id}>{n.title} ({new Date(n.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })})</span>
+            ))}
+            {weeklyNews.map((n) => (
+              <span key={`d-${n.id}`}>{n.title} ({new Date(n.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })})</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ANNOUNCEMENTS */}
       {announcements.filter(a => a.linkUrl).length > 0 && (
         <div className="announcement-bar">
           {announcements.filter(a => a.linkUrl).map(a => (
-            <div key={a.id} style={{ marginBottom: 8 }}>
+            <div key={a.id}>
               <h3>{a.title}</h3>
               <p>{a.content}</p>
-              {a.linkUrl && (
-                <a href={a.linkUrl} target="_blank" rel="noopener noreferrer">
-                  {a.linkText || 'Подробнее'} &rarr;
-                </a>
-              )}
+              {a.linkUrl && <a href={a.linkUrl} target="_blank" rel="noopener noreferrer">{a.linkText || 'Подробнее'} &rarr;</a>}
             </div>
           ))}
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, marginBottom: 30 }}>
-        <div className="card">
-          <h3>&#128337; Расписание богослужений</h3>
-          <p><strong>Пт:</strong> 17:00 — вечернее</p>
-          <p><strong>Вс:</strong> 9:00 — Литургия, 17:00 — Акафист</p>
-          <p style={{ marginTop: 8 }}><Link to="/schedule">Всё расписание &rarr;</Link></p>
+      {/* LIVE BROADCAST */}
+      <div className="section" style={{ paddingBottom: 0 }}>
+        <div className="section-header">
+          <h2>Онлайн-трансляция</h2>
+          <p>Следите за богослужениями онлайн</p>
+          <div className="accent-line" />
         </div>
-        <div className="card">
-          <h3>&#128205; Контакты</h3>
-          <p>ул. Транзитная, 111А</p>
-          <p>п. Зубчаниновка, г. Самара</p>
-          <p>Тел.: <a href="tel:+78469312071">+7 (846) 931-20-71</a></p>
-          <p style={{ marginTop: 8 }}><Link to="/contacts">Все контакты &rarr;</Link></p>
-        </div>
-        <div className="card">
-          <h3>&#127979; Детский центр «Невский»</h3>
-          <p>Учебный филиал НФ «ДЕОЦ»</p>
-          <p>Набор в ГКП-группу от 3 до 7 лет</p>
-          <p style={{ marginTop: 8 }}><Link to="/children">Подробнее &rarr;</Link></p>
+        <div style={{ maxWidth: 800, margin: '0 auto', aspectRatio: '16/9', background: 'var(--dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,.4)', fontSize: '0.9rem', border: '1px solid var(--border)' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem', marginBottom: 12 }}>&#9654;</div>
+            <p>Трансляция будет доступна</p>
+            <p style={{ fontSize: '0.78rem', marginTop: 4 }}>во время богослужений</p>
+          </div>
         </div>
       </div>
 
+      {/* SCHEDULE + CONTACTS */}
+      <div className="section">
+        <div className="section-header">
+          <h2>Расписание и контакты</h2>
+          <div className="accent-line" />
+        </div>
+        <div className="schedule-grid" style={{ marginBottom: 24 }}>
+          <div className="schedule-item">
+            <div className="schedule-item__day">Пятница</div>
+            <p><strong>17:00</strong> — вечерня</p>
+          </div>
+          <div className="schedule-item">
+            <div className="schedule-item__day">Воскресенье</div>
+            <p><strong>9:00</strong> — Божественная литургия</p>
+          </div>
+          <div className="schedule-item">
+            <div className="schedule-item__day">Воскресенье</div>
+            <p><strong>17:00</strong> — Акафист Александру Невскому</p>
+          </div>
+        </div>
+        <p style={{ textAlign: 'center', marginBottom: 24 }}>
+          <Link to="/schedule" style={{ fontSize: '0.85rem', color: 'var(--gold)' }}>Полное расписание &rarr;</Link>
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border-light)' }}>
+          <div className="card">
+            <div className="card__label">Адрес</div>
+            <p>ул. Транзитная, 111А<br />п. Зубчаниновка, г. Самара</p>
+            <p style={{ marginTop: 8 }}>Тел.: <a href="tel:+78469312071">+7 (846) 931-20-71</a></p>
+            <Link to="/contacts" className="link-arrow">Все контакты</Link>
+          </div>
+          <div className="card">
+            <div className="card__label">Настоятель</div>
+            <p><strong>Протоиерей Владимир Болдырев</strong></p>
+            <p style={{ marginTop: 4 }}>Настоятель с 1993 года</p>
+            <p><a href="tel:+79022927136">+7 (902) 292-71-36</a></p>
+          </div>
+          <div className="card">
+            <div className="card__label">Детский центр</div>
+            <p><strong>Учебный филиал «Невский»</strong></p>
+            <p style={{ marginTop: 4 }}>Набор в ГКП-группу от 3 до 7 лет</p>
+            <p><a href="tel:+79277594991">+7 (927) 759-49-91</a></p>
+            <Link to="/children" className="link-arrow">Подробнее</Link>
+          </div>
+        </div>
+      </div>
+
+      {/* GALLERY - DARK */}
+      <div className="section--dark">
+        <div className="section__inner">
+          <div className="section-header">
+            <h2>Фотографии храма</h2>
+            <div className="accent-line" />
+          </div>
+          <div className="photo-grid">
+            <img src="/images/church-hero.jpg" alt="Храм Александра Невского — вид с улицы Транзитной" />
+            <img src="/images/church-2.jpg" alt="Храм Александра Невского — главный вход" />
+            <img src="/images/church-3.jpg" alt="Храм Александра Невского — колокольня" />
+            <img src="/images/church-4.jpg" alt="Храм Александра Невского — территория" />
+            <img src="/images/church-icon.jpg" alt="Мозаика Александра Невского на фасаде храма" />
+            <img src="/images/church-interior.jpg" alt="Иконостас храма Александра Невского" />
+          </div>
+          <p style={{ textAlign: 'center', marginTop: 32 }}>
+            <Link to="/gallery" className="btn btn-gold">Вся галерея</Link>
+          </p>
+        </div>
+      </div>
+
+      {/* HISTORY TEASER */}
+      <div className="section">
+        <div className="section-header">
+          <h2>История храма</h2>
+          <p>От небольшой часовни до духовного центра</p>
+          <div className="accent-line" />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 1, background: 'var(--border-light)' }}>
+          <div className="card" style={{ textAlign: 'center', padding: 40 }}>
+            <div style={{ fontSize: '2.5rem', color: 'var(--gold)', marginBottom: 8 }}>1993</div>
+            <p>Хиротония настоятеля протоиерея Владимира Болдырева</p>
+          </div>
+          <div className="card" style={{ textAlign: 'center', padding: 40 }}>
+            <div style={{ fontSize: '2.5rem', color: 'var(--gold)', marginBottom: 8 }}>2000</div>
+            <p>Строительство первого здания трапезной и воскресной школы</p>
+          </div>
+          <div className="card" style={{ textAlign: 'center', padding: 40 }}>
+            <div style={{ fontSize: '2.5rem', color: 'var(--gold)', marginBottom: 8 }}>2022</div>
+            <p>Открытие детского епархиального образовательного центра</p>
+          </div>
+        </div>
+        <p style={{ textAlign: 'center', marginTop: 24 }}>
+          <Link to="/history" style={{ fontSize: '0.85rem', color: 'var(--gold)' }}>Вся история &rarr;</Link>
+        </p>
+      </div>
+
+      {/* NEWS */}
       {news.length > 0 && (
-        <div>
-          <h2 style={{ color: 'var(--primary-dark)', marginBottom: 16 }}>Новости</h2>
+        <div className="section">
+          <div className="section-header">
+            <h2>Новости</h2>
+            <p>Последние события нашего прихода</p>
+            <div className="accent-line" />
+          </div>
           <div className="news-grid">
-            {news.map(n => (
+            {news.slice(0, 6).map(n => (
               <div key={n.id} className={`news-card ${n.isFeatured ? 'featured' : ''}`}>
                 {n.isFeatured && <span className="badge">Важное</span>}
                 <div className="content">
                   <h3>{n.title}</h3>
                   <p>{n.summary}</p>
-                  <div className="date">{new Date(n.publishedAt).toLocaleDateString('ru-RU')}</div>
+                  <div className="date">{new Date(n.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                 </div>
               </div>
             ))}
           </div>
-          <p style={{ textAlign: 'center', marginTop: 20 }}>
-            <Link to="/news" className="btn btn-primary" style={{ display: 'inline-block', padding: '10px 24px' }}>
-              Все новости
-            </Link>
+          <p style={{ textAlign: 'center', marginTop: 32 }}>
+            <Link to="/news" className="btn btn-primary">Все новости</Link>
           </p>
         </div>
       )}
 
-      <div className="card" style={{ marginTop: 30, textAlign: 'center', padding: 32 }}>
-        <h2 style={{ marginBottom: 12 }}>&#9768; Добро пожаловать в наш храм!</h2>
-        <p style={{ maxWidth: 700, margin: '0 auto', lineHeight: 1.8 }}>
-          Храм в честь благоверного князя Александра Невского — духовный центр посёлка Зубчаниновка.
-          Приглашаем вас на богослужения, в воскресную школу и детский образовательный центр.
-          Будем рады видеть каждого!
+      {/* DONATIONS CTA */}
+      <div style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-soft))', padding: '48px 20px', textAlign: 'center' }}>
+        <h2 style={{ color: 'var(--dark)', fontSize: '1.5rem', fontWeight: 500, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>
+          Поддержите храм
+        </h2>
+        <p style={{ color: 'rgba(18,19,20,.7)', maxWidth: 500, margin: '0 auto', fontSize: '0.95rem', lineHeight: 1.6 }}>
+          Ваша помощь необходима для содержания храма и развития детского центра «Невский»
         </p>
+        <Link to="/donations" className="btn" style={{ marginTop: 24, background: 'var(--dark)', color: 'var(--white)', padding: '14px 32px' }}>
+          Пожертвовать
+        </Link>
       </div>
     </div>
   );

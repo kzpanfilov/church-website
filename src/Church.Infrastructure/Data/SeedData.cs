@@ -144,29 +144,50 @@ public static class SeedData
 </ul>
 <h3>Как записаться</h3>
 <p>Для записи обратитесь по телефону: <a href='tel:+79277594991'>+7 (927) 759-49-91</a></p>
-<p>Или посетите филиал лично по адресу: г.о. Самара, Зубчаниновка, ул. Транзитная, д. 111А</p>
-<h3>Подробнее</h3>
-<p><a href='https://xn--d1acwg1ap.xn--p1ai/filialy/23-filialy/174-uchebnyj-filial-nevskij' target='_blank'>Официальная страница учебного филиала «Невский»</a></p>
-<p><a href='https://xn--d1acwg1ap.xn--p1ai/detjam-i-roditeljam/pravila-priema' target='_blank'>Правила приема в НФ «ДЕОЦ»</a></p>",
+<p>Или посетите филиал лично по адресу: г.о. Самара, Зубчаниновка, ул. Транзитная, д. 111А</p>",
                 IsFeatured = true,
                 PublishedAt = DateTime.UtcNow,
                 ImageUrl = null
             },
             new Core.Models.News
             {
-                Title = "175-летие Самарской епархии",
-                Summary = "В 2026 году Самарская епархия отмечает 175-летие со дня основания.",
-                Content = "<h2>175-летие Самарской епархии</h2><p>В 2026 году Самарская епархия отмечает знаменательную дату — 175-летие со дня основания.</p>",
+                Title = "Воскресная школа приглашает на занятия",
+                Summary = "Воскресная школа при храме Александра Невского продолжает набор детей на новый учебный год. Занятия по воскресеньям после Литургии.",
+                Content = "<h2>Воскресная школа</h2><p>При храме действует воскресная школа для детей и взрослых. Занятия проходят по воскресеньям после окончания Божественной литургии.</p><p>Дети изучают Закон Божий, церковное пение, основы иконописания.</p>",
                 IsFeatured = false,
-                PublishedAt = DateTime.UtcNow.AddDays(-30)
+                PublishedAt = DateTime.UtcNow.AddDays(-1)
+            },
+            new Core.Models.News
+            {
+                Title = "Молебен в начале учебного года",
+                Summary = "1 сентября в храме Александра Невского состоялся молебен в начале нового учебного года для детей и преподавателей.",
+                Content = "<h2>Молебен в начале учебного года</h2><p>1 сентября, в День знаний, после Божественной литургии в храме Александра Невского состоялся молебен о даровании благословения на начинание учебного года.</p><p>На молебне молились дети, родители и педагоги учебного филиала «Невский».</p>",
+                IsFeatured = false,
+                PublishedAt = DateTime.UtcNow.AddDays(-2)
+            },
+            new Core.Models.News
+            {
+                Title = "Подготовка к престольному празднику",
+                Summary = "Храм готовится к празднованию 6 декабря — дня памяти святого благоверного князя Александра Невского.",
+                Content = "<h2>Престольный праздник — 6 декабря</h2><p>Храм готовится к празднованию дня памяти святого благоверного князя Александра Невского — главного престольного праздника.</p><p>6 декабря 2010 года мощи святого Александра Невского были привезены в Самару из Санкт-Петербурга и остались в нашем храме.</p>",
+                IsFeatured = false,
+                PublishedAt = DateTime.UtcNow.AddDays(-3)
+            },
+            new Core.Models.News
+            {
+                Title = "175-летие Самарской епархии",
+                Summary = "В 2026 году Самарская епархия отмечает 175-летие со дня основания. Торжественные богослужения проходят во всех храмах епархии.",
+                Content = "<h2>175-летие Самарской епархии</h2><p>В 2026 году Самарская епархия отмечает знаменательную дату — 175-летие со дня основания.</p><p>Торжественные богослужения проходят во всех храмах епархии. Наш храм также принимает участие в праздничных мероприятиях.</p>",
+                IsFeatured = false,
+                PublishedAt = DateTime.UtcNow.AddDays(-5)
             },
             new Core.Models.News
             {
                 Title = "Продолжается набор детей в школу на 2026/2027 учебный год",
-                Summary = "НФ «ДЕОЦ» продолжает набор детей в учебные филиалы на новый учебный год.",
-                Content = "<h2>Набор в НФ «ДЕОЦ» 2026/2027</h2><p>Продолжается набор детей в учебные филиалы Некоммерческого фонда «Детский епархиальный образовательный центр» на 2026/2027 учебный год.</p>",
+                Summary = "НФ «ДЕОЦ» продолжает набор детей в учебные филиалы на новый учебный год. Запись по телефону.",
+                Content = "<h2>Набор в НФ «ДЕОЦ» 2026/2027</h2><p>Продолжается набор детей в учебные филиалы Некоммерческого фонда «Детский епархиальный образовательный центр» на 2026/2027 учебный год.</p><p>Запись по телефону: +7 (927) 759-49-91</p>",
                 IsFeatured = false,
-                PublishedAt = DateTime.UtcNow.AddDays(-15)
+                PublishedAt = DateTime.UtcNow.AddDays(-6)
             }
         );
 
@@ -189,6 +210,21 @@ public static class SeedData
                 IsActive = true,
                 SortOrder = 2
             }
+        );
+
+        context.Photos.AddRange(
+            new Core.Models.Photo { Title = "Храм Александра Невского — общий вид", Url = "/images/church-hero.jpg", Category = "Храм", SortOrder = 1 },
+            new Core.Models.Photo { Title = "Храм Александра Невского — вид сбоку", Url = "/images/church-2.jpg", Category = "Храм", SortOrder = 2 },
+            new Core.Models.Photo { Title = "Вид с запада", Url = "/images/church-3.jpg", Category = "Храм", SortOrder = 3 },
+            new Core.Models.Photo { Title = "Восточный фасад", Url = "/images/church-4.jpg", Category = "Храм", SortOrder = 4 },
+            new Core.Models.Photo { Title = "Завершение храма", Url = "/images/church-5.jpg", Category = "Детали", SortOrder = 5 },
+            new Core.Models.Photo { Title = "Мозаичная икона на фасаде", Url = "/images/church-icon.jpg", Category = "Детали", SortOrder = 6 },
+            new Core.Models.Photo { Title = "Иконостас", Url = "/images/church-interior.jpg", Category = "Интерьер", SortOrder = 7 }
+        );
+
+        context.Videos.AddRange(
+            new Core.Models.Video { Title = "Храм Александра Невского — видеоэкскурсия", VideoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ", Category = "Храм", SortOrder = 1 },
+            new Core.Models.Video { Title = "Богослужение в храме", VideoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ", Category = "Богослужение", SortOrder = 2 }
         );
 
         context.SiteSettings.AddRange(

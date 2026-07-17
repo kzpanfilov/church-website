@@ -1,4 +1,5 @@
 using Church.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Church.Api.Controllers;
@@ -22,13 +23,23 @@ public class GalleryController : ControllerBase
     }
 
     [HttpPost("photos")]
+    [Authorize]
     public async Task<IActionResult> CreatePhoto([FromBody] Core.Models.Photo photo)
     {
         var result = await _svc.CreatePhotoAsync(photo);
         return CreatedAtAction(nameof(GetPhoto), new { id = result.Id }, result);
     }
 
+    [HttpPut("photos/{id}")]
+    [Authorize]
+    public async Task<IActionResult> UpdatePhoto(int id, [FromBody] Core.Models.Photo photo)
+    {
+        var result = await _svc.UpdatePhotoAsync(id, photo);
+        return result == null ? NotFound() : Ok(result);
+    }
+
     [HttpDelete("photos/{id}")]
+    [Authorize]
     public async Task<IActionResult> DeletePhoto(int id) =>
         await _svc.DeletePhotoAsync(id) ? NoContent() : NotFound();
 
@@ -44,13 +55,23 @@ public class GalleryController : ControllerBase
     }
 
     [HttpPost("videos")]
+    [Authorize]
     public async Task<IActionResult> CreateVideo([FromBody] Core.Models.Video video)
     {
         var result = await _svc.CreateVideoAsync(video);
         return CreatedAtAction(nameof(GetVideo), new { id = result.Id }, result);
     }
 
+    [HttpPut("videos/{id}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateVideo(int id, [FromBody] Core.Models.Video video)
+    {
+        var result = await _svc.UpdateVideoAsync(id, video);
+        return result == null ? NotFound() : Ok(result);
+    }
+
     [HttpDelete("videos/{id}")]
+    [Authorize]
     public async Task<IActionResult> DeleteVideo(int id) =>
         await _svc.DeleteVideoAsync(id) ? NoContent() : NotFound();
 }

@@ -1,5 +1,6 @@
 using Church.Core.DTOs;
 using Church.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Church.Api.Controllers;
@@ -23,6 +24,7 @@ public class SettingsController : ControllerBase
     }
 
     [HttpPut("{key}")]
+    [Authorize]
     public async Task<IActionResult> Update(string key, [FromBody] SiteSettingDto dto)
     {
         await _svc.UpdateSettingAsync(key, dto.Value);

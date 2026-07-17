@@ -48,9 +48,6 @@ export default function LoginPage() {
           Войти
         </button>
       </form>
-      <p style={{ textAlign: 'center', marginTop: 16, color: 'var(--text-light)', fontSize: '0.85rem' }}>
-        По умолчанию: admin / admin123
-      </p>
     </div>
   );
 }

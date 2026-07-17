@@ -7,8 +7,8 @@ export default defineConfig({
     cssCodeSplit: false,
   },
   server: {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
+    proxy: {
+      '/api': 'http://localhost:5000',
     },
   },
 })

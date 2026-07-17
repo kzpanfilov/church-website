@@ -119,6 +119,19 @@ public class ContentService
         return photo;
     }
 
+    public async Task<Photo?> UpdatePhotoAsync(int id, Photo update)
+    {
+        var photo = await _db.Photos.FindAsync(id);
+        if (photo == null) return null;
+        photo.Title = update.Title;
+        photo.Url = update.Url;
+        photo.Description = update.Description;
+        photo.Category = update.Category;
+        photo.SortOrder = update.SortOrder;
+        await _db.SaveChangesAsync();
+        return photo;
+    }
+
     public async Task<bool> DeletePhotoAsync(int id)
     {
         var photo = await _db.Photos.FindAsync(id);
@@ -143,6 +156,19 @@ public class ContentService
     {
         video.CreatedAt = DateTime.UtcNow;
         _db.Videos.Add(video);
+        await _db.SaveChangesAsync();
+        return video;
+    }
+
+    public async Task<Video?> UpdateVideoAsync(int id, Video update)
+    {
+        var video = await _db.Videos.FindAsync(id);
+        if (video == null) return null;
+        video.Title = update.Title;
+        video.VideoUrl = update.VideoUrl;
+        video.Description = update.Description;
+        video.Category = update.Category;
+        video.SortOrder = update.SortOrder;
         await _db.SaveChangesAsync();
         return video;
     }
@@ -174,6 +200,23 @@ public class ContentService
         return evt;
     }
 
+    public async Task<Event?> UpdateEventAsync(int id, Event update)
+    {
+        var evt = await _db.Events.FindAsync(id);
+        if (evt == null) return null;
+        evt.Title = update.Title;
+        evt.Description = update.Description;
+        evt.EventDate = update.EventDate;
+        evt.Time = update.Time;
+        evt.Location = update.Location;
+        evt.ImageUrl = update.ImageUrl;
+        evt.IsRecurring = update.IsRecurring;
+        evt.RecurrenceRule = update.RecurrenceRule;
+        evt.IsPublished = update.IsPublished;
+        await _db.SaveChangesAsync();
+        return evt;
+    }
+
     public async Task<bool> DeleteEventAsync(int id)
     {
         var evt = await _db.Events.FindAsync(id);
@@ -197,6 +240,21 @@ public class ContentService
     {
         ann.CreatedAt = DateTime.UtcNow;
         _db.Announcements.Add(ann);
+        await _db.SaveChangesAsync();
+        return ann;
+    }
+
+    public async Task<Announcement?> UpdateAnnouncementAsync(int id, Announcement update)
+    {
+        var ann = await _db.Announcements.FindAsync(id);
+        if (ann == null) return null;
+        ann.Title = update.Title;
+        ann.Content = update.Content;
+        ann.LinkUrl = update.LinkUrl;
+        ann.LinkText = update.LinkText;
+        ann.IsActive = update.IsActive;
+        ann.SortOrder = update.SortOrder;
+        ann.ExpiresAt = update.ExpiresAt;
         await _db.SaveChangesAsync();
         return ann;
     }

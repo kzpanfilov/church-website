@@ -1,4 +1,5 @@
 using Church.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Church.Api.Controllers;
@@ -26,6 +27,7 @@ public class NewsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] Core.Models.News news)
     {
         var result = await _svc.CreateNewsAsync(news);
@@ -33,6 +35,7 @@ public class NewsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, [FromBody] Core.Models.News news)
     {
         var result = await _svc.UpdateNewsAsync(id, news);
@@ -40,6 +43,7 @@ public class NewsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id) =>
         await _svc.DeleteNewsAsync(id) ? NoContent() : NotFound();
 }

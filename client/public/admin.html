@@ -49,7 +49,10 @@ textarea{resize:vertical;min-height:100px}
 .status{padding:2px 8px;border-radius:4px;font-size:.8rem;font-weight:600}
 .status-on{background:#e8f5e9;color:#2e7d32}
 .status-off{background:#ffebee;color:#c62828}
-@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.form-row{grid-template-columns:1fr}}
+.mobile-hamburger{display:none!important;align-items:center;justify-content:center;width:40px;height:40px;background:var(--primary);color:#fff;border:none;cursor:pointer;font-size:1.3rem;position:fixed;top:8px;left:8px;z-index:1001;border-radius:4px}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999}
+.sidebar-overlay.open{display:block}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{position:fixed;left:-260px;top:0;bottom:0;width:260px;z-index:1000;transition:left .3s}.sidebar.open{left:0}.mobile-hamburger{display:flex!important}.content{padding:16px;padding-top:56px}.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -63,15 +66,17 @@ textarea{resize:vertical;min-height:100px}
       <input type="password" id="login-pass" placeholder="Пароль" required>
       <button type="submit">Войти</button>
     </form>
-    <p style="text-align:center;margin-top:16px;color:var(--text-light);font-size:.85rem">По умолчанию: admin / admin123</p>
   </div>
 </div>
 
 <div id="admin-page" class="layout" style="display:none">
+  <button class="mobile-hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('open')">&#9776;</button>
+  <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('open')"></div>
   <div class="sidebar">
     <h3>&#9881; Админ-панель</h3>
     <a onclick="showSection('home')" id="nav-home" class="active">Главная</a>
     <a onclick="showSection('pages')" id="nav-pages">Страницы</a>
+    <a onclick="showSection('schedule')" id="nav-schedule">Расписание</a>
     <a onclick="showSection('news')" id="nav-news">Новости</a>
     <a onclick="showSection('gallery')" id="nav-gallery">Галерея</a>
     <a onclick="showSection('announcements')" id="nav-announcements">Объявления</a>
@@ -140,8 +145,11 @@ function showSection(name) {
   document.querySelectorAll('.sidebar a').forEach(function(a) { a.classList.remove('active'); });
   var nav = document.getElementById('nav-' + name);
   if (nav) nav.classList.add('active');
+  document.querySelector('.sidebar').classList.remove('open');
+  document.querySelector('.sidebar-overlay').classList.remove('open');
   if (name === 'home') renderHome();
   else if (name === 'pages') renderPages();
+  else if (name === 'schedule') renderSchedule();
   else if (name === 'news') renderNews();
   else if (name === 'gallery') renderGallery();
   else if (name === 'announcements') renderAnnouncements();
@@ -155,6 +163,7 @@ function renderHome() {
     '<h2>Добро пожаловать в админ-панель</h2>' +
     '<div class="grid4">' +
     '<div class="card" onclick="showSection(\'pages\')"><h3>&#128196;</h3><p>Страницы</p></div>' +
+    '<div class="card" onclick="showSection(\'schedule\')"><h3>&#128197;</h3><p>Расписание</p></div>' +
     '<div class="card" onclick="showSection(\'news\')"><h3>&#128240;</h3><p>Новости</p></div>' +
     '<div class="card" onclick="showSection(\'gallery\')"><h3>&#128247;</h3><p>Галерея</p></div>' +
     '<div class="card" onclick="showSection(\'announcements\')"><h3>&#128227;</h3><p>Объявления</p></div>' +
@@ -232,6 +241,100 @@ function resetPageForm() {
 function deletePage(id) {
   if (!confirm('Удалить страницу?')) return;
   api('DELETE', '/pages/' + id).then(function() { renderPages(); });
+}
+
+// === SCHEDULE ===
+function renderSchedule() {
+  api('GET', '/events?count=100').then(function(events) {
+    var h = '<h2>Расписание богослужений</h2>' +
+      '<div class="card"><h3>Добавить богослужение</h3>' +
+      '<form id="sched-form" onsubmit="saveSchedule(event)">' +
+      '<div class="form-row">' +
+      '<div class="form-group"><label>Название</label><input type="text" id="sf-title" placeholder="Вечерня, Литургия, Акафист..." required></div>' +
+      '<div class="form-group"><label>День недели</label><select id="sf-day">' +
+      '<option value="Понедельник">Понедельник</option>' +
+      '<option value="Вторник">Вторник</option>' +
+      '<option value="Среда">Среда</option>' +
+      '<option value="Четверг">Четверг</option>' +
+      '<option value="Пятница" selected>Пятница</option>' +
+      '<option value="Суббота">Суббота</option>' +
+      '<option value="Воскресенье">Воскресенье</option>' +
+      '</select></div>' +
+      '</div>' +
+      '<div class="form-row">' +
+      '<div class="form-group"><label>Время</label><input type="text" id="sf-time" placeholder="17:00" required></div>' +
+      '<div class="form-group"><label>Место</label><input type="text" id="sf-location" placeholder="Храм Александра Невского"></div>' +
+      '</div>' +
+      '<div class="form-group"><label>Описание</label><input type="text" id="sf-desc" placeholder="Вечернее богослужение"></div>' +
+      '<div class="checkbox"><input type="checkbox" id="sf-recurring" checked><label for="sf-recurring">Еженедельно</label></div>' +
+      '<div class="checkbox"><input type="checkbox" id="sf-published" checked><label for="sf-published">Опубликовано</label></div>' +
+      '<input type="hidden" id="sf-id">' +
+      '<button type="submit" class="btn btn-primary">Добавить</button>' +
+      '<button type="button" class="btn" onclick="resetSchedForm()" id="sf-cancel" style="display:none;margin-left:8px">Отмена</button>' +
+      '</form></div>';
+
+    if (events.length) {
+      h += '<table><thead><tr><th>День</th><th>Время</th><th>Название</th><th>Описание</th><th>Статус</th><th>Действия</th></tr></thead><tbody>';
+      var dayOrder = {'Понедельник':1,'Вторник':2,'Среда':3,'Четверг':4,'Пятница':5,'Суббота':6,'Воскресенье':7};
+      events.sort(function(a,b) { return (dayOrder[a.time]||99) - (dayOrder[b.time]||99); });
+      events.forEach(function(ev) {
+        h += '<tr><td>' + esc(ev.time || '—') + '</td><td>' + esc(ev.location || '—') + '</td>' +
+          '<td><strong>' + esc(ev.title) + '</strong></td><td>' + esc(ev.description || '—') + '</td>' +
+          '<td>' + (ev.isPublished ? '<span class="status status-on">OK</span>' : '<span class="status status-off">Скрыто</span>') + '</td>' +
+          '<td><button class="btn btn-primary btn-sm" onclick="editSchedule(' + ev.id + ')">Ред.</button> ' +
+          '<button class="btn btn-danger btn-sm" onclick="deleteSchedule(' + ev.id + ')">Удал.</button></td></tr>';
+      });
+      h += '</tbody></table>';
+    } else {
+      h += '<p class="empty">Расписание пусто. Добавьте первое богослужение выше.</p>';
+    }
+    document.getElementById('content-area').innerHTML = h;
+  });
+}
+
+function saveSchedule(e) {
+  e.preventDefault();
+  var id = document.getElementById('sf-id').value;
+  var data = {
+    title: document.getElementById('sf-title').value,
+    time: document.getElementById('sf-time').value,
+    description: document.getElementById('sf-desc').value || null,
+    location: document.getElementById('sf-location').value || null,
+    eventDate: new Date().toISOString(),
+    isRecurring: document.getElementById('sf-recurring').checked,
+    isPublished: document.getElementById('sf-published').checked
+  };
+  var pr = id ? api('PUT', '/events/' + id, data) : api('POST', '/events', data);
+  pr.then(function() { resetSchedForm(); renderSchedule(); }).catch(function() { alert('Ошибка сохранения'); });
+}
+
+function editSchedule(id) {
+  api('GET', '/events?count=100').then(function(events) {
+    var ev = events.find(function(x) { return x.id === id; });
+    if (!ev) return;
+    document.getElementById('sf-id').value = ev.id;
+    document.getElementById('sf-title').value = ev.title;
+    document.getElementById('sf-time').value = ev.time || '';
+    document.getElementById('sf-desc').value = ev.description || '';
+    document.getElementById('sf-location').value = ev.location || '';
+    document.getElementById('sf-recurring').checked = ev.isRecurring;
+    document.getElementById('sf-published').checked = ev.isPublished;
+    document.getElementById('sf-cancel').style.display = '';
+    window.scrollTo(0, 0);
+  });
+}
+
+function resetSchedForm() {
+  document.getElementById('sched-form').reset();
+  document.getElementById('sf-id').value = '';
+  document.getElementById('sf-cancel').style.display = 'none';
+  document.getElementById('sf-recurring').checked = true;
+  document.getElementById('sf-published').checked = true;
+}
+
+function deleteSchedule(id) {
+  if (!confirm('Удалить богослужение из расписания?')) return;
+  api('DELETE', '/events/' + id).then(function() { renderSchedule(); });
 }
 
 // === NEWS ===

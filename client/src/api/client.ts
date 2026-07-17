@@ -23,6 +23,7 @@ export const getNewsById = (id: number) => api.get<NewsItem>(`/news/${id}`).then
 export const getPhotos = (category?: string) => api.get<Photo[]>('/gallery/photos', { params: { category } }).then(r => r.data);
 export const getVideos = (category?: string) => api.get<Video[]>('/gallery/videos', { params: { category } }).then(r => r.data);
 export const getUpcomingEvents = (count = 10) => api.get<ChurchEvent[]>(`/events?count=${count}`).then(r => r.data);
+export const getAllEvents = () => api.get<ChurchEvent[]>('/events/all').then(r => r.data);
 export const getAnnouncements = () => api.get<Announcement[]>('/announcements').then(r => r.data);
 export const getSettings = (group?: string) => api.get<SiteSetting[]>('/settings', { params: { group } }).then(r => r.data);
 
@@ -40,10 +41,14 @@ export const createNews = (news: Partial<NewsItem>) => api.post<NewsItem>('/news
 export const updateNews = (id: number, news: Partial<NewsItem>) => api.put<NewsItem>(`/news/${id}`, news).then(r => r.data);
 export const deleteNews = (id: number) => api.delete(`/news/${id}`);
 export const createPhoto = (photo: Partial<Photo>) => api.post<Photo>('/gallery/photos', photo).then(r => r.data);
+export const updatePhoto = (id: number, photo: Partial<Photo>) => api.put<Photo>(`/gallery/photos/${id}`, photo).then(r => r.data);
 export const deletePhoto = (id: number) => api.delete(`/gallery/photos/${id}`);
 export const createVideo = (video: Partial<Video>) => api.post<Video>('/gallery/videos', video).then(r => r.data);
+export const updateVideo = (id: number, video: Partial<Video>) => api.put<Video>(`/gallery/videos/${id}`, video).then(r => r.data);
 export const deleteVideo = (id: number) => api.delete(`/gallery/videos/${id}`);
 export const createEvent = (evt: Partial<ChurchEvent>) => api.post<ChurchEvent>('/events', evt).then(r => r.data);
+export const updateEvent = (id: number, evt: Partial<ChurchEvent>) => api.put<ChurchEvent>(`/events/${id}`, evt).then(r => r.data);
 export const deleteEvent = (id: number) => api.delete(`/events/${id}`);
 export const createAnnouncement = (ann: Partial<Announcement>) => api.post<Announcement>('/announcements', ann).then(r => r.data);
+export const updateAnnouncement = (id: number, ann: Partial<Announcement>) => api.put<Announcement>(`/announcements/${id}`, ann).then(r => r.data);
 export const deleteAnnouncement = (id: number) => api.delete(`/announcements/${id}`);

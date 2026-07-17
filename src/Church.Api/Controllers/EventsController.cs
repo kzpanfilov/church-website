@@ -1,4 +1,5 @@
 using Church.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Church.Api.Controllers;
@@ -26,13 +27,23 @@ public class EventsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] Core.Models.Event evt)
     {
         var result = await _svc.CreateEventAsync(evt);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Update(int id, [FromBody] Core.Models.Event evt)
+    {
+        var result = await _svc.UpdateEventAsync(id, evt);
+        return result == null ? NotFound() : Ok(result);
+    }
+
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id) =>
         await _svc.DeleteEventAsync(id) ? NoContent() : NotFound();
 }

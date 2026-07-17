@@ -1,4 +1,5 @@
 using Church.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Church.Api.Controllers;
@@ -33,6 +34,7 @@ public class PagesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] Core.Models.Page page)
     {
         var result = await _svc.CreatePageAsync(page);
@@ -40,6 +42,7 @@ public class PagesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, [FromBody] Core.Models.Page page)
     {
         var result = await _svc.UpdatePageAsync(id, page);
@@ -47,6 +50,7 @@ public class PagesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id) =>
         await _svc.DeletePageAsync(id) ? NoContent() : NotFound();
 }

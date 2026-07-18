@@ -5,7 +5,7 @@ import type { NewsItem, Announcement, ChurchEvent } from '../api/types';
 
 const heroSlides = [
   { img: '/images/church-hero.jpg', title: 'Храм Александра Невского', desc: 'Духовный центр посёлка Зубчаниновка с 2001 года. Приглашаем на богослужения.' },
-  { img: '/images/church-2.jpg', title: 'Расписание богослужений', desc: 'Пт 17:00 — вечерня  ·  Вс 9:00 — литургия  ·  Вс 17:00 — акафист' },
+  { img: '/images/church-2.jpg', title: 'Расписание богослужений', desc: 'Пт 17:00 — Вечерня  ·  Сб 17:00 — Всенощная  ·  Вс 9:00 — Литургия  ·  Вс 17:00 — Акафист' },
   { img: '/images/church-interior.jpg', title: 'Детский центр «Невский»', desc: 'Набор детей от 3 до 7 лет. Художественное и духовно-просветительское направления.' },
   { img: '/images/church-4.jpg', title: 'Приходите в наш храм', desc: 'ул. Транзитная, 111А, п. Зубчаниновка, г. Самара. Тел.: +7 (846) 931-20-71' },
 ];
@@ -119,24 +119,35 @@ export default function Home() {
         </div>
         <div className="schedule-grid" style={{ marginBottom: 24 }}>
           {events.length > 0 ? (
-            events.map(ev => (
-              <div key={ev.id} className="schedule-item">
-                <div className="schedule-item__day">{['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][ev.dayOfWeek]}</div>
-                <p><strong>{ev.time}</strong> — {ev.title}</p>
-              </div>
-            ))
+            [5, 6, 0, 1, 2, 3, 4]
+              .filter(dow => events.some(e => e.dayOfWeek === dow))
+              .map(dow => {
+                const dayEvents = events.filter(e => e.dayOfWeek === dow).sort((a, b) => {
+                  const parse = (t: string) => { const [h, m] = (t || '0:0').split(':').map(Number); return h * 60 + (m || 0); };
+                  return parse(a.time || '') - parse(b.time || '');
+                });
+                return dayEvents.map((ev, i) => (
+                  <div key={ev.id} className="schedule-item">
+                    {i === 0 && <div className="schedule-item__day">{['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][ev.dayOfWeek]}</div>}
+                    {i > 0 && <div className="schedule-item__day" style={{ visibility: 'hidden' }}>{['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][ev.dayOfWeek]}</div>}
+                    <p><strong>{ev.time}</strong> — {ev.title}</p>
+                  </div>
+                ));
+              })
           ) : (
             <>
               <div className="schedule-item">
                 <div className="schedule-item__day">Пятница</div>
-                <p><strong>17:00</strong> — вечерня</p>
+                <p><strong>17:00</strong> — Вечерня</p>
+              </div>
+              <div className="schedule-item">
+                <div className="schedule-item__day">Суббота</div>
+                <p><strong>17:00</strong> — Всенощное бдение</p>
               </div>
               <div className="schedule-item">
                 <div className="schedule-item__day">Воскресенье</div>
+                <p><strong>8:00</strong> — Исповедь перед причастием</p>
                 <p><strong>9:00</strong> — Божественная литургия</p>
-              </div>
-              <div className="schedule-item">
-                <div className="schedule-item__day">Воскресенье</div>
                 <p><strong>17:00</strong> — Акафист Александру Невскому</p>
               </div>
             </>

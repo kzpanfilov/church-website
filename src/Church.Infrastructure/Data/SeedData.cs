@@ -41,16 +41,17 @@ public static class SeedData
 <div class='schedule-grid'>
 <div class='schedule-item'>
 <h3>Пятница</h3>
-<p><strong>17:00</strong> — Вечернее богослужение</p>
+<p><strong>17:00</strong> — Вечерня</p>
 </div>
 <div class='schedule-item'>
 <h3>Суббота</h3>
-<p><strong>17:00</strong> — Всенощное бдение (по указанию настоятеля)</p>
+<p><strong>17:00</strong> — Всенощное бдение</p>
 </div>
 <div class='schedule-item'>
 <h3>Воскресенье</h3>
+<p><strong>8:00</strong> — Исповедь перед причастием</p>
 <p><strong>9:00</strong> — Божественная литургия</p>
-<p><strong>17:00</strong> — Акафист</p>
+<p><strong>17:00</strong> — Акафист Александру Невскому</p>
 </div>
 </div>
 <h3>Престольные праздники</h3>
@@ -241,14 +242,36 @@ public static class SeedData
             },
             new Core.Models.Event
             {
+                Title = "Всенощное бдение",
+                Description = "Субботнее вечернее богослужение",
+                DayOfWeek = 6,
+                Time = "17:00",
+                Location = "Храм Александра Невского",
+                IsRecurring = true,
+                IsPublished = true,
+                SortOrder = 2
+            },
+            new Core.Models.Event
+            {
+                Title = "Исповедь перед причастием",
+                Description = "Подготовка к причастию",
+                DayOfWeek = 0,
+                Time = "8:00",
+                Location = "Храм Александра Невского",
+                IsRecurring = true,
+                IsPublished = true,
+                SortOrder = 3
+            },
+            new Core.Models.Event
+            {
                 Title = "Божественная литургия",
-                Description = "Утреннее богослужение",
+                Description = "Воскресенское утреннее богослужение",
                 DayOfWeek = 0,
                 Time = "9:00",
                 Location = "Храм Александра Невского",
                 IsRecurring = true,
                 IsPublished = true,
-                SortOrder = 2
+                SortOrder = 4
             },
             new Core.Models.Event
             {
@@ -259,7 +282,7 @@ public static class SeedData
                 Location = "Храм Александра Невского",
                 IsRecurring = true,
                 IsPublished = true,
-                SortOrder = 3
+                SortOrder = 5
             }
         );
 

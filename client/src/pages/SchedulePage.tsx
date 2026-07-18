@@ -3,12 +3,18 @@ import { getScheduleEvents } from '../api/client';
 import type { ChurchEvent } from '../api/types';
 
 const DAY_NAMES = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 const SAINTS = [
   { date: '12 декабря', name: 'День памяти святого благоверного князя Александра Невского', type: 'Престольный праздник' },
   { date: '6 декабря', name: 'День памяти святого благоверного великого князя Александра Невского', type: 'Престольный праздник' },
   { date: '23 ноября', name: 'Собор Казанских святых', type: 'Праздник' },
 ];
+
+function sortTime(a: string, b: string) {
+  const parse = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + (m || 0); };
+  return parse(a) - parse(b);
+}
 
 export default function SchedulePage() {
   const [events, setEvents] = useState<ChurchEvent[]>([]);
@@ -18,10 +24,12 @@ export default function SchedulePage() {
     getScheduleEvents(50).then(setEvents).catch(() => {});
   }, []);
 
-  const grouped = DAY_NAMES.map((day, idx) => ({
-    day,
-    events: events.filter(e => e.dayOfWeek === idx),
-  })).filter(g => g.events.length > 0);
+  const grouped = WEEK_ORDER
+    .map(dow => ({
+      day: DAY_NAMES[dow],
+      events: events.filter(e => e.dayOfWeek === dow).sort((a, b) => sortTime(a.time || '', b.time || '')),
+    }))
+    .filter(g => g.events.length > 0);
 
   const handlePrint = () => window.print();
 
@@ -52,14 +60,16 @@ export default function SchedulePage() {
           <div className="schedule-grid" style={{ marginBottom: 1 }}>
             <div className="schedule-item">
               <div className="schedule-item__day">Пятница</div>
-              <p><strong>17:00</strong> — вечерня</p>
+              <p><strong>17:00</strong> — Вечерня</p>
+            </div>
+            <div className="schedule-item">
+              <div className="schedule-item__day">Суббота</div>
+              <p><strong>17:00</strong> — Всенощное бдение</p>
             </div>
             <div className="schedule-item">
               <div className="schedule-item__day">Воскресенье</div>
+              <p><strong>8:00</strong> — Исповедь перед причастием</p>
               <p><strong>9:00</strong> — Божественная литургия</p>
-            </div>
-            <div className="schedule-item">
-              <div className="schedule-item__day">Воскресенье</div>
               <p><strong>17:00</strong> — Акафист Александру Невскому</p>
             </div>
           </div>
